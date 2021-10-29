@@ -43,7 +43,8 @@ If your datasets are tidy already, demonstrate that you can reshape data with pi
 
 ```{R}
 # your joining code
-
+inner_join(overdose,opioid,by=c("Location"="State")) -> opioid_overdose
+glimpse(opioid_overdose)
 # your joining code
 ```
 
@@ -53,10 +54,40 @@ Discussions of joining here. Feel encouraged to break up into more than once cod
 
 ```{R}
 # your wrangling code
+opioid_overdose %>% filter(Age.adjusted.Rate<25) %>% arrange(Age.adjusted.Rate)
 
+opioid_overdose %>% group_by(Location) %>% summarize() %>% arrange(desc(Number.of.Deaths))
+
+opioid_overdose %>% select(Location,Opioid.Dispensing.Rate.per.100) %>% filter(Opioid.Dispensing.Rate.per.100>50) %>% arrange(desc(Opioid.Dispensing.Rate.per.100))
+
+#opioid_overdose %>% group_by(Location=='Texas') %>% summarize()
+
+opioid_overdose %>% select(-Abbreviation)
+
+#All rates are per 100,000 population.
+opioid_overdose %>% mutate(Deaths.per.100000=((Age.adjusted.Rate/100)*100000))
+
+opioid_overdose %>% glimpse()
+
+opioid_overdose %>% summarize_all(function(x)sum(is.na(x)))
+
+opioid_overdose %>% mutate(Range.Category = str_replace(Range.Category, "to", "\\-"))
+
+opioid_overdose %>% summarize(mean=mean(Age.adjusted.Rate), sd=sd(Age.adjusted.Rate), n_distinct(Age.adjusted.Rate), min(Age.adjusted.Rate), max(Age.adjusted.Rate),var(Age.adjusted.Rate),n=n(),se=sd/sqrt(n))
+
+opioid_overdose %>% summarize(mean=mean(Number.of.Deaths), sd=sd(Number.of.Deaths), n_distinct(Number.of.Deaths), min(Number.of.Deaths), max(Number.of.Deaths),var(Number.of.Deaths),n=n(),se=sd/sqrt(n))
+
+opioid_overdose %>% summarize(mean=mean(Opioid.Dispensing.Rate.per.100), sd=sd(Opioid.Dispensing.Rate.per.100), n_distinct(Opioid.Dispensing.Rate.per.100), min(Opioid.Dispensing.Rate.per.100), max(Opioid.Dispensing.Rate.per.100),var(Opioid.Dispensing.Rate.per.100),n=n(),se=sd/sqrt(n))
+
+opioid_overdose %>% group_by(Location) %>% summarize(Deaths.per.100000=((Age.adjusted.Rate/100)*100000))
+
+opioid_overdose %>% group_by(Range.Category) %>% summarize(n())
+
+opioid_overdose %>% group_by(Abbreviation) %>% summarize(n())
+
+opioid_overdose %>% group_by(Location) %>% summarize(n())
 # your wrangling code
 
-# your wrangling code
 ```
 
 Your discussion of wrangling section here. Feel encouraged to break up into more than once code chunk and discuss each in turn.
@@ -66,18 +97,34 @@ Your discussion of wrangling section here. Feel encouraged to break up into more
 
 ```{R}
 # your plot 1
+ggplot(opioid_overdose, aes(Number.of.Deaths, Opioid.Dispensing.Rate.per.100)) + xlab('Number of Deaths') + ylab('Opioid Dispensing Rate') + ggtitle('Deaths by Dispensing Rate') + geom_point() + geom_smooth(method="lm")
+#add tick marks
 ```
 
 Your discussion of plot 1
 
 ```{R}
 # your plot 2
+
+ggplot(opioid_overdose, aes(x=Age.adjusted.Rate)) + geom_histogram(aes(y=..density..), bins=15)+
+  geom_density(color="red")
+
+#ggplot(opioid_overdose, aes(x=Age.adjusted.Rate, y=Opioid.Dispensing.Rate.per.100, fill=Location)) 
+
+ggplot(opioid_overdose, aes(x = Opioid.Dispensing.Rate.per.100, y = Location=='Texas')) +
+  geom_bar(stat="summary") +
+  geom_errorbar(stat="summary", width=.5)
+
+ggplot(opioid_overdose, aes(x = Opioid.Dispensing.Rate.per.100, y = Location=='Texas')) +
+  geom_bar(stat="summary", fun=mean)+
+  geom_errorbar(stat="summary", fun.data=mean_cl_normal, width=.5)
 ```
 
 Your discussion of plot 2
 
 ```{R}
 # your plot 3
+ggplot(opioid_overdose, aes(Age.adjusted.Rate, Number.of.Deaths))+geom_density2d_filled() + geom_jitter(alpha = 0.6)
 ```
 
 Your discussion of plot 3

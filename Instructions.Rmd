@@ -193,6 +193,15 @@ If you are totally clueless and have no direction at all, log into the server an
 
 ```{R eval=F}
 data(package = .packages(all.available = TRUE))
+
+library(survival)
+heart <- heart
+stanford2 <- stanford2
+library(flexmix)
+dmft
+data(dmft,package='flexmix')
+data(gdental,package='actuar')
+data(belcap,package='VGAMdata')
 ```
 
 This will print out a list of **ALL datasets in ALL packages** installed on the server (a ton)! Scroll until your eyes bleed! Actually, do not scroll that much... To start with something more manageable, just run the command on your own computer, or just run `data()` to bring up the datasets in your current environment. To read more about a dataset, do `?packagename::datasetname`. 
