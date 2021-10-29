@@ -27,7 +27,9 @@ Paragraph or two introducing your datasets and variables, why they are interesti
 
 ```{R}
 # read your datasets in here, e.g., with read_csv()
-
+library(tidyverse)
+overdose <- read.csv('overdose.csv')
+opioid <- read.csv('opioid dispensing .csv')
 ```
 
 #### Tidying: Reshaping
@@ -43,8 +45,10 @@ If your datasets are tidy already, demonstrate that you can reshape data with pi
 
 ```{R}
 # your joining code
+library(tidyverse)
 inner_join(overdose,opioid,by=c("Location"="State")) -> opioid_overdose
-glimpse(opioid_overdose)
+opioid_overdose
+
 # your joining code
 ```
 
@@ -56,7 +60,7 @@ Discussions of joining here. Feel encouraged to break up into more than once cod
 # your wrangling code
 opioid_overdose %>% filter(Age.adjusted.Rate<25) %>% arrange(Age.adjusted.Rate)
 
-opioid_overdose %>% group_by(Location) %>% summarize() %>% arrange(desc(Number.of.Deaths))
+opioid_overdose %>% group_by(Location) %>% arrange(desc(Number.of.Deaths))
 
 opioid_overdose %>% select(Location,Opioid.Dispensing.Rate.per.100) %>% filter(Opioid.Dispensing.Rate.per.100>50) %>% arrange(desc(Opioid.Dispensing.Rate.per.100))
 
@@ -73,19 +77,23 @@ opioid_overdose %>% summarize_all(function(x)sum(is.na(x)))
 
 opioid_overdose %>% mutate(Range.Category = str_replace(Range.Category, "to", "\\-"))
 
+#summary statistics
 opioid_overdose %>% summarize(mean=mean(Age.adjusted.Rate), sd=sd(Age.adjusted.Rate), n_distinct(Age.adjusted.Rate), min(Age.adjusted.Rate), max(Age.adjusted.Rate),var(Age.adjusted.Rate),n=n(),se=sd/sqrt(n))
 
 opioid_overdose %>% summarize(mean=mean(Number.of.Deaths), sd=sd(Number.of.Deaths), n_distinct(Number.of.Deaths), min(Number.of.Deaths), max(Number.of.Deaths),var(Number.of.Deaths),n=n(),se=sd/sqrt(n))
 
 opioid_overdose %>% summarize(mean=mean(Opioid.Dispensing.Rate.per.100), sd=sd(Opioid.Dispensing.Rate.per.100), n_distinct(Opioid.Dispensing.Rate.per.100), min(Opioid.Dispensing.Rate.per.100), max(Opioid.Dispensing.Rate.per.100),var(Opioid.Dispensing.Rate.per.100),n=n(),se=sd/sqrt(n))
 
-opioid_overdose %>% group_by(Location) %>% summarize(Deaths.per.100000=((Age.adjusted.Rate/100)*100000))
-
 opioid_overdose %>% group_by(Range.Category) %>% summarize(n())
 
 opioid_overdose %>% group_by(Abbreviation) %>% summarize(n())
 
 opioid_overdose %>% group_by(Location) %>% summarize(n())
+
+opioid_overdose %>% group_by(Opioid.Dispensing.Rate.per.100>50) %>% pivot_longer(contains("50"), values_to="Opioid.Dispensing.Rate.per.100>50") %>% select(-name)
+
+opioid_overdose %>% group_by(Opioid.Dispensing.Rate.per.100>50) %>% summarize(mean=mean(Number.of.Deaths),sd=sd(Number.of.Deaths)) %>% pivot_longer(-1, values_to='Number of Deaths')
+
 # your wrangling code
 
 ```
@@ -111,6 +119,7 @@ ggplot(opioid_overdose, aes(x=Age.adjusted.Rate)) + geom_histogram(aes(y=..densi
 
 #ggplot(opioid_overdose, aes(x=Age.adjusted.Rate, y=Opioid.Dispensing.Rate.per.100, fill=Location)) 
 
+#####
 ggplot(opioid_overdose, aes(x = Opioid.Dispensing.Rate.per.100, y = Location=='Texas')) +
   geom_bar(stat="summary") +
   geom_errorbar(stat="summary", width=.5)
