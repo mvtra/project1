@@ -37,7 +37,7 @@ opioid <- read.csv('opioid dispensing .csv')
 
 ```{R}
 ```
-The tidying of this project was done in the wrangling section. After finding the summary statistic for the mean and sd of number of deaths when the opioid dispensing rate is above/below 50, pivot longer was used to organize the data into three columns, 'Opioid.Dispensing.Rate.per.100 > 50', 'name', and 'Number of Deaths'. Then, pivot wider was used to organize the data into two rows, 'mean' and 'sd', with three columns, 'name', 'FALSE', and 'TRUE'.
+The tidying of this project was done in the wrangling section to rearrange summary statistics. After finding the summary statistic for the mean and standard deviation of the number of deaths when the opioid dispensing rate is above/below 50, pivot longer was used to organize the data into three columns, 'Opioid.Dispensing.Rate.per.100 > 50', 'name', and 'Number of Deaths'. Then, pivot wider was used to organize the data into two rows, 'mean' and 'sd', with three columns, 'name', 'FALSE', and 'TRUE'.
     
 #### Joining/Merging
 
@@ -70,7 +70,7 @@ opioid_overdose %>% summarize(mean=mean(Opioid.Dispensing.Rate.per.100), sd=sd(O
   
 opioid_overdose %>% summarize_all(function(x)sum(is.na(x)))
 
-opioid_overdose %>% group_by(Location) %>% 
+opioid_overdose %>% group_by(Location, Abbreviation) %>% 
   summarize(opioid.dispensing.per.100000=((Opioid.Dispensing.Rate.per.100/100)*100000))
 
 opioid_overdose %>% group_by(Range.Category) %>% summarize(n())
@@ -92,7 +92,7 @@ table1 %>% gt %>%
 ```
 
   
-  To find which location has the highest opioid dispensing rate and the most deaths by drug overdose, 'opioid_overdose' was grouped by location and arranged in descending order by 'Number.of.Deaths' and 'Opioid.Dispensing.Rate.per.100', respectively. California has the highest number of deaths by drug overdose, and Alabama has the highest opioid dispensing rate. To find out how many have a dispensing rate over 50, select was used to narrow down the dataset to just 'Location' and 'Opioid.Dispensing.Rate.per.100'. Filter was used to find 'Opioid.Dispensing.Rate.per.100>50', and count was used to tally up the number of locations that had a dispensing rate over 50, which was 20 locations. Mutate was used to generate a variable, called 'Deaths.per.100000', that is a function of 'Age.adjusted.Rate', by dividing 'Age.adjusted.Rate' by 100 and mulitplying it by 100,000 to find the number of deaths per 100,000 people at each location. Mutate was used again with a `stringr` function, 'str_replace', inside of it to change 'to' to '-' in the 'Range.Category' variable using regex. 
+  To find which location had the highest opioid dispensing rate and the most deaths by drug overdose, 'opioid_overdose' was grouped by location and arranged in descending order by 'Number.of.Deaths' and 'Opioid.Dispensing.Rate.per.100', respectively. California has the highest number of deaths by drug overdose, and Alabama has the highest opioid dispensing rate. To find out how many locations had a dispensing rate over 50, select was used to narrow down the dataset to just 'Location' and 'Opioid.Dispensing.Rate.per.100'. Filter was used to find 'Opioid.Dispensing.Rate.per.100>50', and count was used to tally up the number of locations that had a dispensing rate over 50, which was 20 locations. Mutate was used to generate a variable, called 'Deaths.per.100000', that is a function of 'Age.adjusted.Rate', by dividing 'Age.adjusted.Rate' by 100 and mulitplying it by 100,000 to find the number of deaths per 100,000 people at each location. Mutate was used again with a `stringr` function, 'str_replace', inside of it to change 'to' to '-' in the 'Range.Category' variable using regex. 
   
   To compute summary statistics, the dataset was summarized by the mean, sd, n_distinct, min, max, n, and se of each numeric variable. The mean age adjusted death rate is around 23 with a sd of around 10. The mean number of deaths is around 1384 and the sd is around 1407. The mean opioid dispensing rate is around 50 and the sd is around 13. To find the number of missing values for each variable, a function was created in summarize to find the sum of is.na for each variable. Summarize was used to generate a variable, called 'opioid.dispensing.per.100000', that is a function of 'Opioid.Dispensing.Rate.per.100', by dividing it by 100 and mulitplying it by 100,000 to find the opioid dispensing rate per 100,000 people at each location. The dataset was also, seperately, grouped by each categorical variable to find the counts of each variable by putting n() inside summarize. To find the mean and sd of number of deaths when the opioid dispensing rate is above/below 50, the dataset was grouped by 'Opioid.Dispensing.Rate.per.100>50' and summarized by the mean and sd of 'Number.of.Deaths'. The mean and sd of the number of deaths when the opioid dispensing rate is less than 50 is around 1493 and 1628 people, respectively, and, when the opioid dispensing rate is greater than 50, the mean and sd is around 1218 and 989 people, respectively. 
 
@@ -125,7 +125,7 @@ The plot depicts the distribution of the age adjusted death rate and number of d
 
 #### Concluding Remarks
 
-According to the findings, there appears to be no relationship between opioid dispensing rates and number of deaths by drug overdose; however, the data obtained does not account for opioid dispensing through other methods besides prescription.
+According to the findings, there appears to be no relationship between opioid dispensing rates and number of deaths by drug overdose; however, the data obtained does not account for opioid dispensing through other means besides prescription.
 
 
 
