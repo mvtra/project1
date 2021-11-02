@@ -23,9 +23,9 @@ tidy=TRUE, tidy.opts=list(width.cutoff=60), R.options=list(max.print=100))
 
 #### Introduction 
 
-  Death by drug overdose is a huge problem that continues to take the lives of many individuals each day. Nearly 70% of all overdoses involves opioids (CDC). The dispensing of opioids is a topic that I am heavily interested in as it has become a prevalent issue in the healthcare industry. Roughly 24% of individuals prescribed opioids for chronic pain misuse them (CDC). In this project, two datasets obtained from the CDC will be used to examine relationships, if any, between (documented) opioid dispensing rate and drug overdose death rates in each state and D.C. It is predicted that there will be a linear relationship between opioid dispensing rate and deaths by drug overdose in each location. 
+  Death by drug overdose is a problem that continues to take the lives of many individuals each day. Nearly 70% of all overdoses involves opioids (CDC). The dispensing of opioids is a topic that I am heavily interested in as it has become a prevalent issue in the healthcare industry. Roughly 24% of individuals prescribed opioids for chronic pain misuse them (CDC). In this project, two datasets obtained from the CDC will be used to examine relationships, if any, between (documented) opioid dispensing rate and drug overdose death rates in each state and D.C. It is predicted that there will be a linear relationship between opioid dispensing rate and deaths by drug overdose in each location. 
   
-  The first dataset, called 'overdose', features data from 2019 outlining drug overdose death rates in the US. The second dataset, called 'opioid', includes data from 2019 on opioid dispensing rates in the US. In the 'overdose' dataset, there are 4 variables. The variable 'Location' features the 50 states and D.C. The variable 'Age.adjusted.Rate' is the age adjusted rate of deaths by drug overdose per 100,000 population. The variable 'Range.Category' features the minimum to maximum age adjusted rate that was calculated. The variable 'Number.of.Deaths' is the number of drug overdose deaths per 100,000 population. In the 'opioid' dataset, there are three variables. The variable 'States' features the 50 states, D.C. and the U.S. The variable 'Abbreviation' is the abbreviation of each state. The variable 'Opioid.Dispensing.Rate.per.100' is the opioid dispensing rate per 100 persons.
+  The first dataset, called 'overdose', features data from 2019 outlining drug overdose death rates in the US. The second dataset, called 'opioid', includes data from 2019 on opioid dispensing rates, through prescription, in the US. In the 'overdose' dataset, there are 4 variables. The variable 'Location' features the 50 states and D.C. The variable 'Age.adjusted.Rate' is the age adjusted rate of deaths by drug overdose per 100,000 population. The variable 'Range.Category' features the minimum to maximum age adjusted rate that was calculated. The variable 'Number.of.Deaths' is the number of drug overdose deaths per 100,000 population. In the 'opioid' dataset, there are three variables. The variable 'States' features the 50 states, D.C. and the U.S. The variable 'Abbreviation' is the abbreviation of each state. The variable 'Opioid.Dispensing.Rate.per.100' is the opioid dispensing rate per 100 persons.
 
 ```{R}
 library(tidyverse)
@@ -43,7 +43,6 @@ The tidying of this project was done in the wrangling section. After finding the
 
 ```{R}
 inner_join(overdose,opioid,by=c("Location"="State")) -> opioid_overdose
-
 overdose %>% n_distinct()
 opioid %>% n_distinct()
 ```
@@ -55,7 +54,7 @@ An inner join was used to join the two datasets together by the ID variable 'Loc
 ```{R}
 opioid_overdose %>% group_by(Location) %>% arrange(desc(Number.of.Deaths))
 
-opioid_overdose %>% group_by(Location) %>% arrange(desc(Opioid.Dispensing.Rate.per.100))
+opioid_overdose %>% group_by(Location) %>% select(Location,Opioid.Dispensing.Rate.per.100) %>% arrange(desc(Opioid.Dispensing.Rate.per.100))
 
 opioid_overdose %>% select(Location,Opioid.Dispensing.Rate.per.100) %>% filter(Opioid.Dispensing.Rate.per.100>50) %>% count()
 
@@ -68,7 +67,7 @@ opioid_overdose %>% summarize(mean=mean(Age.adjusted.Rate), sd=sd(Age.adjusted.R
 opioid_overdose %>% summarize(mean=mean(Number.of.Deaths), sd=sd(Number.of.Deaths), n_distinct(Number.of.Deaths), min(Number.of.Deaths), max(Number.of.Deaths),n=n(),se=sd/sqrt(n))
 
 opioid_overdose %>% summarize(mean=mean(Opioid.Dispensing.Rate.per.100), sd=sd(Opioid.Dispensing.Rate.per.100), n_distinct(Opioid.Dispensing.Rate.per.100), min(Opioid.Dispensing.Rate.per.100), max(Opioid.Dispensing.Rate.per.100),n=n(),se=sd/sqrt(n))
-
+  
 opioid_overdose %>% summarize_all(function(x)sum(is.na(x)))
 
 opioid_overdose %>% group_by(Location) %>% 
@@ -95,7 +94,7 @@ table1 %>% gt %>%
   
   To find which location has the highest opioid dispensing rate and the most deaths by drug overdose, 'opioid_overdose' was grouped by location and arranged in descending order by 'Number.of.Deaths' and 'Opioid.Dispensing.Rate.per.100', respectively. California has the highest number of deaths by drug overdose, and Alabama has the highest opioid dispensing rate. To find out how many have a dispensing rate over 50, select was used to narrow down the dataset to just 'Location' and 'Opioid.Dispensing.Rate.per.100'. Filter was used to find 'Opioid.Dispensing.Rate.per.100>50', and count was used to tally up the number of locations that had a dispensing rate over 50, which was 20 locations. Mutate was used to generate a variable, called 'Deaths.per.100000', that is a function of 'Age.adjusted.Rate', by dividing 'Age.adjusted.Rate' by 100 and mulitplying it by 100,000 to find the number of deaths per 100,000 people at each location. Mutate was used again with a `stringr` function, 'str_replace', inside of it to change 'to' to '-' in the 'Range.Category' variable using regex. 
   
-  To compute summary statistics, the dataset was summarized by the mean, sd, n_distinct, min, max, n, and se of each numeric variable. The mean age adjusted death rate is around 23 with a sd of around 10. The mean number of deaths is around 1384 and the sd is around 1407. The mean opioid dispensing rate is around 50 and the sd is around 13. To number of missing values for each variable, a function was created in summarize to find the sum of is.na for each variable. Summarize was used to generate a variable, called 'opioid.dispensing.per.100000', that is a function of 'Opioid.Dispensing.Rate.per.100', by dividing it by 100 and mulitplying it by 100,000 to find the opioid dispensing rate per 100,000 people at each location. The dataset was also, seperately, grouped by each categorical variable to find the counts of each variable by putting n() inside summarize. To find the mean and sd of number of deaths when the opioid dispensing rate is above/below 50, the dataset was grouped by 'Opioid.Dispensing.Rate.per.100>50' and summarized by the mean and sd of 'Number.of.Deaths'. The mean and sd of the number of deaths when the opioid dispensing rate is less than 50 is around 1493 and 1628 people, respectively, and, when the opioid dispensing rate is greater than 50, the mean and sd is around 1218 and 989 people, respectively. 
+  To compute summary statistics, the dataset was summarized by the mean, sd, n_distinct, min, max, n, and se of each numeric variable. The mean age adjusted death rate is around 23 with a sd of around 10. The mean number of deaths is around 1384 and the sd is around 1407. The mean opioid dispensing rate is around 50 and the sd is around 13. To find the number of missing values for each variable, a function was created in summarize to find the sum of is.na for each variable. Summarize was used to generate a variable, called 'opioid.dispensing.per.100000', that is a function of 'Opioid.Dispensing.Rate.per.100', by dividing it by 100 and mulitplying it by 100,000 to find the opioid dispensing rate per 100,000 people at each location. The dataset was also, seperately, grouped by each categorical variable to find the counts of each variable by putting n() inside summarize. To find the mean and sd of number of deaths when the opioid dispensing rate is above/below 50, the dataset was grouped by 'Opioid.Dispensing.Rate.per.100>50' and summarized by the mean and sd of 'Number.of.Deaths'. The mean and sd of the number of deaths when the opioid dispensing rate is less than 50 is around 1493 and 1628 people, respectively, and, when the opioid dispensing rate is greater than 50, the mean and sd is around 1218 and 989 people, respectively. 
 
 #### Visualizing
 
@@ -122,11 +121,11 @@ ggplot(opioid_overdose, aes(Age.adjusted.Rate, Number.of.Deaths)) + xlab('Age Ad
   scale_y_continuous(breaks=seq(0,6000,1000)) + theme_classic()
 ```
 
-The plot depicts the distribution of the age adjusted death rate and number of deaths, where the points represents the age adjusted death rate and number of deaths at each location. The yellow region represents where the concentration of age adjusted death rate and number of deaths is the highest, which occurs when the age adjusted rate is in the range of 12-18 and the number of deaths is in the range of 500 - 800. 
+The plot depicts the distribution of the age adjusted death rate and number of deaths, where the points represents the age adjusted death rate and number of deaths at each location. The points are most heavily concentration towards the left corner of the plot. The yellow region represents where the concentration of age adjusted death rate and number of deaths is the highest, which occurs when the age adjusted rate is in the range of 12-18 and the number of deaths is in the range of 500 - 800. It can be seen that the age adjusted rate spans across a range of values from 5 to 55, and the number of deaths for most of the locations is between the range of 50 to 3000.
 
 #### Concluding Remarks
 
-According to the findings, there appears to be no relationship between opioid dispensing rates and number of deaths by drug overdose; however, the data obtained does not account for illegal opioid distribution that contributes to the overdose deaths each day. 
+According to the findings, there appears to be no relationship between opioid dispensing rates and number of deaths by drug overdose; however, the data obtained does not account for opioid dispensing through other methods besides prescription.
 
 
 
