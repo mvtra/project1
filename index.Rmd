@@ -25,7 +25,7 @@ tidy=TRUE, tidy.opts=list(width.cutoff=60), R.options=list(max.print=100))
 
   Death by drug overdose is a problem that continues to take the lives of many individuals each day. Nearly 70% of all overdoses involves opioids (CDC). The dispensing of opioids is a topic that I am heavily interested in as it has become a prevalent issue in the healthcare industry. Roughly 24% of individuals prescribed opioids for chronic pain misuse them (CDC). In this project, two datasets obtained from the CDC will be used to examine relationships, if any, between (documented) opioid dispensing rate and drug overdose death rates in each state and D.C. It is predicted that there will be a linear relationship between opioid dispensing rate and deaths by drug overdose in each location. 
   
-  The first dataset, called 'overdose', features data from 2019 outlining drug overdose death rates in the US. The second dataset, called 'opioid', includes data from 2019 on opioid dispensing rates, through prescription, in the US. In the 'overdose' dataset, there are 4 variables. The variable 'Location' features the 50 states and D.C. The variable 'Age.adjusted.Rate' is the age adjusted rate of deaths by drug overdose per 100,000 population. The variable 'Range.Category' features the minimum to maximum age adjusted rate that was calculated. The variable 'Number.of.Deaths' is the number of drug overdose deaths per 100,000 population. In the 'opioid' dataset, there are three variables. The variable 'States' features the 50 states, D.C. and the U.S. The variable 'Abbreviation' is the abbreviation of each state. The variable 'Opioid.Dispensing.Rate.per.100' is the opioid dispensing rate per 100 persons.
+  The first dataset, called 'overdose', features data from 2019 outlining drug overdose death rates in the US. The second dataset, called 'opioid', includes data from 2019 on opioid dispensing rates, through prescription, in the US. In the 'overdose' dataset, there are 4 variables. The variable 'Location' features the 50 states and D.C. The variable 'Age.adjusted.Rate' is the age adjusted rate of deaths by drug overdose per 100,000 population. The variable 'Range.Category' features the minimum to maximum age adjusted rate that was calculated. The variable 'Number.of.Deaths' is the number of drug overdose deaths per 100,000 population. In the 'opioid' dataset, there are three variables. The variable 'States' features the 50 states, D.C. and the U.S. The variable 'Abbreviation' is the abbreviation of each state. The variable 'Opioid.Dispensing.Rate.per.100' is the opioid dispensing rate per 100 people.
 
 ```{R}
 library(tidyverse)
@@ -112,7 +112,7 @@ ggplot(opioid_overdose, aes(x = Opioid.Dispensing.Rate.per.100, y = Location=='T
   geom_bar(stat="summary",fill='salmon') + geom_errorbar(stat="summary", width=.5) + theme_light()
 ```
 
-The plot depicts the opioid dispensing rate in Texas compared to all of the other locations. The opioid dispensing rate in Texas is relatively lower than the rest of the locations. All of the other locations combined have an average opioid dispensing rate close to 50 people per 100 persons with a standard error of around 2, whereas Texas has an opioid dispensing rate of around 42 people per 100 persons.
+The plot depicts the opioid dispensing rate in Texas compared to all of the other locations. The opioid dispensing rate in Texas is relatively lower than the rest of the locations. All of the other locations combined have an average opioid dispensing rate close to 50 people per 100 people with a standard error of around 2, whereas Texas has an opioid dispensing rate of around 42 people per 100 people.
 
 ```{R}
 ggplot(opioid_overdose, aes(Age.adjusted.Rate, Number.of.Deaths)) + xlab('Age Adjusted Rate') + 
@@ -121,12 +121,8 @@ ggplot(opioid_overdose, aes(Age.adjusted.Rate, Number.of.Deaths)) + xlab('Age Ad
   scale_y_continuous(breaks=seq(0,6000,1000)) + theme_classic()
 ```
 
-The plot depicts the distribution of the age adjusted death rate and number of deaths, where the points represents the age adjusted death rate and number of deaths at each location. The points are most heavily concentration towards the left corner of the plot. The yellow region represents where the concentration of age adjusted death rate and number of deaths is the highest, which occurs when the age adjusted rate is in the range of 12-18 and the number of deaths is in the range of 500 - 800. It can be seen that the age adjusted rate spans across a range of values from 5 to 55, and the number of deaths for most of the locations is between the range of 50 to 3000.
+The plot depicts the distribution of the age adjusted death rate and number of deaths, where the points represents the age adjusted death rate and number of deaths at each location. The points are most heavily concentration towards the left corner of the plot. The yellow region represents where the concentration of age adjusted death rate and number of deaths is the highest, which occurs when the age adjusted rate is in the range of 12-18 and the number of deaths is in the range of 500 to 800 people. It can be seen that the age adjusted rate spans across a range of values from 5 to 55, and the number of deaths for most of the locations is between the range of 50 to 3000 people.
 
 #### Concluding Remarks
 
 According to the findings, there appears to be no relationship between opioid dispensing rates and number of deaths by drug overdose; however, the data obtained does not account for opioid dispensing through other means besides prescription.
-
-
-
-
